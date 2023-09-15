@@ -154,9 +154,12 @@ void mergeInsertionSort(std::vector < int > & v, int start, int end, int pairSiz
 
     pairwiseComparison(pairSize, v, start, end);
 
+    /**
+     * あとここだけー
+     * Recursion. The ⌊𝑛2⌋ larger elements, i.e., a1 to 𝑎⌊𝑛2⌋ are sorted recursively. 
+     * Then all elements (the ⌊𝑛2⌋ larger ones as well as the corresponding smaller ones) are renamed accordingly such that ai < ai+ 1 and ai > bi still holds.
+    */
     // mergeInsertionSort(v, 0, v.size(), pairSize * 2);
-    // if(pairSize < 4)
-    //     return;
 
     std::vector < int > s;
     separateMainChainAndSubChain(v, s, pairSize);
