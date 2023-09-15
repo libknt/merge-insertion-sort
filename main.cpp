@@ -5,7 +5,7 @@
 # include <exception> 
 # include <algorithm>
 
-    typedef std::vector < int > ::const_iterator cv_itr;
+typedef std::vector < int > ::const_iterator cv_itr;
 typedef std::vector < int > ::iterator v_itr;
 typedef std::vector < v_itr > ::iterator vi_itr;
 
