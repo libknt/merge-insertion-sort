@@ -41,10 +41,20 @@ int checkOverflow(int pairSize, std::vector<int> & v, int start) {
     return false;
 }
 
-void    pairwiseComparison(int pairSize, std::vector<int> & v) {
+void    pairwiseComparison(int pairSize, std::vector<int> & v, std::vector<int> & tmp) {
     for ( int i=0; i < v.size();) {
         if(checkOverflow(pairSize,v,i))
-            break;
+        {
+            tmp.insert(tmp.begin(), v.begin() + i,v.end() );
+            v.erase(v.begin() + i, v.end());
+            // std::cout << std::endl << "tmp tmp pairsize: ~" << (pairSize/2) << "~ line: " << __LINE__ << std::endl;
+            
+            // for ( v_itr it = tmp.begin(); it != tmp.end(); ++it ) {
+            //     std::cout << *it << " ";
+            // }
+            // std::cout << std::endl << "tmp end: ~" << (pairSize/2) << "~ line: " << __LINE__ << std::endl;
+                break;
+        }
         if(comparison(pairSize,v,i)) {
                 swap(pairSize,v,i);
         }
@@ -143,23 +153,70 @@ v_itr   binarySearch(std::vector<int> & v, int key, int pairSize, int keyPositio
     return lower_bound(iterators,begin, end, key, iterators.size());
 }
 
-void insertionFromSubIntoMain(std::vector<int> & v, std::vector<int> & s, int pairSize) {
-    v_itr it = binarySearch(v, (*s.begin()), pairSize, 0);
+void insertionFromSubIntoMain(std::vector<int> & mainChain, std::vector<int> & subChain, int pairSize) {
 
-    
-    v_itr s_begin = s.begin();
-    v_itr s_end = s.begin();
-    for (int i=0; i < pairSize; ++i) {
-        ++s_end;
-        if(s_end == s.end()) {
-            break;
+    for ( ; !subChain.empty(); ) {
+    #ifdef SORT
+        std::cout << std::endl;
+        std::cout << std::endl << "separateMainChain pairsize: ~" << (pairSize/2) << "~ line: " << __LINE__ << std::endl;
+        for(v_itr it=mainChain.begin(); it != mainChain.end(); ++it){
+            int index = std::distance(mainChain.begin(), it);
+            if(index % (pairSize) == 0) std::cout << " [" ;
+            std::cout << *it;
+            if(index % (pairSize) == 0) std::cout << "] " ;
+            std::cout << "  ";
         }
+        std::cout << std::endl << "separateSubChain pairsize: ~" << (pairSize/2) << "~ line: " << __LINE__ << std::endl;
+        for(v_itr it=subChain.begin(); it != subChain.end(); ++it){
+            int index = std::distance(subChain.begin(), it);
+            if(index % (pairSize) == 0) std::cout << " [" ;
+            std::cout << *it;
+            if(index % (pairSize) == 0) std::cout << "] " ;
+            std::cout << "  ";
+        }
+        std::cout << std::endl;
+    #endif
+        v_itr it = binarySearch(mainChain, (*subChain.begin()), pairSize, 0);
+
+        v_itr s_begin = subChain.begin();
+        v_itr s_end = subChain.begin();
+        if(subChain.size() < pairSize * 2) {
+            s_end = subChain.end();
+        } else {
+            for (int i=0; i < pairSize; ++i) {
+                ++s_end;
+                if(s_end == subChain.end()) {
+                    break;
+                }
+            }
+        }
+
+        // if(pairSize == 1) {
+        //     insert(v, it, s, s_begin, s_begin);
+        //     return ;
+        // }
+        insert(mainChain, it, subChain, s_begin, s_end);
     }
-    if(pairSize == 1) {
-        insert(v, it, s, s_begin, s_begin);
-        return ;
-    }
-    insert(v, it, s, s_begin, s_end);
+    #ifdef SORT
+        std::cout << std::endl;
+        std::cout << std::endl << "LastMainChain pairsize: ~" << (pairSize/2) << "~ line: " << __LINE__ << std::endl;
+        for(v_itr it=mainChain.begin(); it != mainChain.end(); ++it){
+            int index = std::distance(mainChain.begin(), it);
+            if(index % (pairSize) == 0) std::cout << " [" ;
+            std::cout << *it;
+            if(index % (pairSize) == 0) std::cout << "] " ;
+            std::cout << "  ";
+        }
+        std::cout << std::endl << "LastSubChain pairsize: ~" << (pairSize/2) << "~ line: " << __LINE__ << std::endl;
+        for(v_itr it=subChain.begin(); it != subChain.end(); ++it){
+            int index = std::distance(subChain.begin(), it);
+            if(index % (pairSize) == 0) std::cout << " [" ;
+            std::cout << *it;
+            if(index % (pairSize) == 0) std::cout << "] " ;
+            std::cout << "  ";
+        }
+        std::cout << std::endl;
+    #endif
 }
 
 void mergeInsertionSort(std::vector<int> & mainChain,int pairSize) {
@@ -189,7 +246,8 @@ void mergeInsertionSort(std::vector<int> & mainChain,int pairSize) {
         }
         std::cout << std::endl;
     #endif
-    pairwiseComparison(pairSize, mainChain);
+    std::vector<int> tmp;
+    pairwiseComparison(pairSize, mainChain,tmp);
     mergeInsertionSort(mainChain, pairSize * 2);
 
     std::vector<int> subChain;
@@ -236,28 +294,28 @@ void mergeInsertionSort(std::vector<int> & mainChain,int pairSize) {
         }
         std::cout << std::endl;
     #endif
-
+    subChain.insert(subChain.end(), tmp.begin(), tmp.end());
     insertionFromSubIntoMain(mainChain, subChain, pairSize);
-    #ifdef SORT
-        std::cout << std::endl;
-        std::cout << std::endl << "separateMainChain pairsize: ~" << (pairSize/2) << "~ line: " << __LINE__ << std::endl;
-        for(v_itr it=mainChain.begin(); it != mainChain.end(); ++it){
-            int index = std::distance(mainChain.begin(), it);
-            if(index % (pairSize) == 0) std::cout << " [" ;
-            std::cout << *it;
-            if(index % (pairSize) == 0) std::cout << "] " ;
-            std::cout << "  ";
-        }
-        std::cout << std::endl << "separateSubChain pairsize: ~" << (pairSize/2) << "~ line: " << __LINE__ << std::endl;
-        for(v_itr it=subChain.begin(); it != subChain.end(); ++it){
-            int index = std::distance(subChain.begin(), it);
-            if(index % (pairSize) == 0) std::cout << " [" ;
-            std::cout << *it;
-            if(index % (pairSize) == 0) std::cout << "] " ;
-            std::cout << "  ";
-        }
-        std::cout << std::endl;
-    #endif
+    // #ifdef SORT
+    //     std::cout << std::endl;
+    //     std::cout << std::endl << "separateMainChain pairsize: ~" << (pairSize/2) << "~ line: " << __LINE__ << std::endl;
+    //     for(v_itr it=mainChain.begin(); it != mainChain.end(); ++it){
+    //         int index = std::distance(mainChain.begin(), it);
+    //         if(index % (pairSize) == 0) std::cout << " [" ;
+    //         std::cout << *it;
+    //         if(index % (pairSize) == 0) std::cout << "] " ;
+    //         std::cout << "  ";
+    //     }
+    //     std::cout << std::endl << "separateSubChain pairsize: ~" << (pairSize/2) << "~ line: " << __LINE__ << std::endl;
+    //     for(v_itr it=subChain.begin(); it != subChain.end(); ++it){
+    //         int index = std::distance(subChain.begin(), it);
+    //         if(index % (pairSize) == 0) std::cout << " [" ;
+    //         std::cout << *it;
+    //         if(index % (pairSize) == 0) std::cout << "] " ;
+    //         std::cout << "  ";
+    //     }
+    //     std::cout << std::endl;
+    // #endif
     subChain.clear();
 }
 
