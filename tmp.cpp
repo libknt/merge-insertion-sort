@@ -2,7 +2,7 @@
 #include <string>
 #include <vector>
 #include <list>
-# include <exception>
+#include <exception>
 #include <algorithm>
 
 typedef std::vector<int>::const_iterator cv_itr;
@@ -16,7 +16,6 @@ void mergeInsertionSort(std::vector<int> & v, int start, int end,int pairSize);
 int     comparison(int pairSize, std::vector<int> & v, int start) {
     if(v.size() <= (pairSize + start))
         return -1;
-    std::cout << v[start] << "<" << v[pairSize+start] << std::endl;
     if(v[start] < v[pairSize+ start])
         return 1;
     return 0;
@@ -155,18 +154,10 @@ void insertionFromSubIntoMain(std::vector<int> & v, std::vector<int> & s, int pa
 }
 
 void mergeInsertionSort(std::vector<int> & v, int start, int end,int pairSize) {
-    if(v.size() / pairSize  <=2) return ;
-    
-    pairwiseComparison(pairSize, v, start, end);
-
-    mergeInsertionSort(v, 0, v.size(), pairSize * 2);
-    // if(pairSize < 4)
-    //     return;
-
-    std::vector<int> s;
-                            int i=0;
+    if(v.size() / pairSize  <= 2) return ;
+    int i=0;
                         std::cout << std::endl <<  "=========================" << std::endl;
-                            std::cout << std::endl <<  "vector" << std::endl;
+                            std::cout << std::endl <<  "now" << " pairSize: " << pairSize << std::endl;
                             i = 0;
                             for ( v_itr it = v.begin(); it != v.end(); ++it) {
                                 if((i % pairSize) == 0)
@@ -177,30 +168,63 @@ void mergeInsertionSort(std::vector<int> & v, int start, int end,int pairSize) {
                                 std::cout << " ";
                                 i++;
                             }
-    separateMainChainAndSubChain(v, s, pairSize);
-                        std::cout << std::endl <<  "vector" << std::endl;
-                            i=0;
-                        for ( v_itr it = v.begin(); it != v.end(); ++it) {
-                                if((i % pairSize) == 0)
-                                    std::cout << "[";
-                                std::cout << *it;
-                                if((i % pairSize) == 0)
-                                    std::cout << "]";
-                                std::cout << " ";
-                                i++;
-                        }
-                        std::cout << std::endl <<  "small" << std::endl;
-                            i=0;
-                        for ( v_itr it = s.begin(); it != s.end(); ++it) {
-                                if((i % pairSize) == 0)
-                                    std::cout << "[";
-                                std::cout << *it;
-                                if((i % pairSize) == 0)
-                                    std::cout << "]";
-                                std::cout << " ";
-                                i++;
-                        }
+    
+    pairwiseComparison(pairSize, v, start, end);
                         std::cout << std::endl <<  "=========================" << std::endl;
+                            std::cout << std::endl <<  "sort after" << " pairSize: " << pairSize << std::endl;
+                            i = 0;
+                            for ( v_itr it = v.begin(); it != v.end(); ++it) {
+                                if((i % pairSize) == 0)
+                                    std::cout << "[";
+                                std::cout << *it;
+                                if((i % pairSize) == 0)
+                                    std::cout << "]";
+                                std::cout << " ";
+                                i++;
+                            }
+
+    mergeInsertionSort(v, 0, v.size(), pairSize * 2);
+    // if(pairSize < 4)
+    //     return;
+
+    std::vector<int> s;
+                        //     i=0;
+                        // std::cout << std::endl <<  "=========================" << std::endl;
+                        //     std::cout << std::endl <<  "vector" << std::endl;
+                        //     i = 0;
+                        //     for ( v_itr it = v.begin(); it != v.end(); ++it) {
+                        //         if((i % pairSize) == 0)
+                        //             std::cout << "[";
+                        //         std::cout << *it;
+                        //         if((i % pairSize) == 0)
+                        //             std::cout << "]";
+                        //         std::cout << " ";
+                        //         i++;
+                        //     }
+    separateMainChainAndSubChain(v, s, pairSize);
+                        // std::cout << std::endl <<  "vector" << std::endl;
+                        //     i=0;
+                        // for ( v_itr it = v.begin(); it != v.end(); ++it) {
+                        //         if((i % pairSize) == 0)
+                        //             std::cout << "[";
+                        //         std::cout << *it;
+                        //         if((i % pairSize) == 0)
+                        //             std::cout << "]";
+                        //         std::cout << " ";
+                        //         i++;
+                        // }
+                        // std::cout << std::endl <<  "small" << std::endl;
+                        //     i=0;
+                        // for ( v_itr it = s.begin(); it != s.end(); ++it) {
+                        //         if((i % pairSize) == 0)
+                        //             std::cout << "[";
+                        //         std::cout << *it;
+                        //         if((i % pairSize) == 0)
+                        //             std::cout << "]";
+                        //         std::cout << " ";
+                        //         i++;
+                        // }
+                        // std::cout << std::endl <<  "=========================" << std::endl;
     insertAtTheStart(v, s, s.begin(), s.begin() + pairSize);
                         std::cout << std::endl <<  "=========================" << std::endl;
                             std::cout << "                                      pairSize: "<< pairSize << std::endl;
