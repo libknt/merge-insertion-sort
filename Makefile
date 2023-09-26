@@ -1,51 +1,62 @@
-CXX = g++
-CXXFLAGS = -std=c++98
+.PHONY: all clean fclean re leak address pair separate first insert
 
-ifdef PAIR
-CXXFLAGS += -DPAIR
-endif
+NAME	= PmergeMe
+CXX		= c++
 
-ifdef SEPARATE
-CXXFLAGS += -DSEPARATE 
-endif
+CXXFLAGS	= -Wall -Wextra -Werror -std=c++98
 
-ifdef INSERTATTHESTART
-CXXFLAGS += -DINSERTATTHESTART
-endif
+SRC =	main.cpp \
+		PmergeMe.cpp
 
-ifdef SORT
-CXXFLAGS += -DSORT
-endif
+OBJ = $(SRC:.cpp=.o)
 
-all: program
+all: $(NAME)
 
-program: main.o
-	$(CXX) $(CXXFLAGS) -o test main.o
-
-main.o:	main.cpp
-	$(CXX) $(CXXFLAGS) -c main.cpp
+$(NAME): $(OBJ)
+	$(CXX) $(CXXFLAGS) $^ -o $@
 
 clean:
-	rm -f *.o program
+	$(RM) $(OBJ)
 
-fclean:clean
-	rm -f test
+fclean: clean
+	$(RM) $(NAME)
 
 re: fclean all
 
-debug:
-	make PAIR=1 SEPARATE=1 INSERTATTHESTART=1
 
-p:
-	make PAIR=1
 
-sep:
-	make SEPARATE=1
+# debug address leak pair separate first insert
+# CXXFLAGS+= -DLISTDEBUG
+# CXXFLAGS+= -DVECTORDEBUG
+address:fclean
+address:CXXFLAGS+= -g -fsanitize=address
+address:all
 
-first:
-	make INSERTATTHESTART=1
+leak:fclean
+leak:CXXFLAGS+= -DLEAK
+leak:all
 
-sort:
-	make SORT=1
+pair:fclean
+pair:CXXFLAGS+= -DPAIR
+pair:all
+
+separate:fclean
+separate:CXXFLAGS+= -DSEPARATE
+separate:all
+
+first:fclean
+first:CXXFLAGS+= -DFIRST
+first:all
+
+insert:fclean
+insert:CXXFLAGS+= -DINSERT
+insert:all
+
+help:
+	@echo "make address"
+	@echo "make leak"
+	@echo "make pair"
+	@echo "make separate"
+	@echo "make first"
+	@echo "make insert"
 	
-.PHONY: all program clean fclean re debug p sep first sort
